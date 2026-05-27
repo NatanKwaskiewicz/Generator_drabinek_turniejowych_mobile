@@ -7,10 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tourney.app.databinding.ItemMatchBinding;
 import com.tourney.app.models.Match;
 import com.tourney.app.models.Tournament;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RoundRobinAdapter extends RecyclerView.Adapter<RoundRobinAdapter.ViewHolder> {
     public interface OnMatchClick { void onClick(Match m); }
@@ -26,7 +23,7 @@ public class RoundRobinAdapter extends RecyclerView.Adapter<RoundRobinAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemMatchBinding binding = ItemMatchBinding.inflate(
-            LayoutInflater.from(parent.getContext()), parent, false);
+                LayoutInflater.from(parent.getContext()), parent, false);
         return new ViewHolder(binding);
     }
 
