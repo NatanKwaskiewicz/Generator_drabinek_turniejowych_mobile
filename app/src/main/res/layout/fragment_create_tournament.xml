@@ -88,10 +88,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_teams"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="240dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="16dp"
-            android:nestedScrollingEnabled="false" />
+            android:nestedScrollingEnabled="true"
+            android:scrollbars="vertical" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_create"
