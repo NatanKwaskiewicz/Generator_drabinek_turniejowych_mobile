@@ -85,7 +85,6 @@
             android:padding="8dp"
             android:visibility="gone" />
 
-        <!-- Teams list: fixed height for ~4 items, scrollable if more -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_teams"
             android:layout_width="match_parent"

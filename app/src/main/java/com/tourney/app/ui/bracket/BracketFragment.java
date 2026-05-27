@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.tourney.app.R;
 import com.tourney.app.adapters.MatchAdapter;
 import com.tourney.app.adapters.RoundRobinAdapter;
-import com.tourney.app.adapters.SwissAdapter;
 import com.tourney.app.api.RetrofitClient;
 import com.tourney.app.databinding.FragmentBracketBinding;
 import com.tourney.app.models.Match;
@@ -55,7 +53,7 @@ public class BracketFragment extends Fragment {
     private void loadTournament() {
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.contentLayout.setVisibility(View.GONE);
-        RetrofitClient.getInstance().getApi().getTournament(tournamentId).enqueue(new Callback<Tournament>() {
+        RetrofitClient.getInstance().getApi().getTournament(tournamentId).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Tournament> call, @NonNull Response<Tournament> response) {
                 if (!isAdded()) return;
@@ -67,6 +65,7 @@ public class BracketFragment extends Fragment {
                     Toast.makeText(getContext(), "Failed to load tournament", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<Tournament> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
@@ -112,7 +111,7 @@ public class BracketFragment extends Fragment {
                 call = RetrofitClient.getInstance().getApi().generateMatches(tournamentId);
             }
             binding.btnGenerateMatches.setEnabled(false);
-            call.enqueue(new Callback<List<Match>>() {
+            call.enqueue(new Callback<>() {
                 @Override
                 public void onResponse(@NonNull Call<List<Match>> call, @NonNull Response<List<Match>> response) {
                     if (!isAdded()) return;
@@ -128,6 +127,7 @@ public class BracketFragment extends Fragment {
                         }
                     }
                 }
+
                 @Override
                 public void onFailure(@NonNull Call<List<Match>> call, @NonNull Throwable t) {
                     if (!isAdded()) return;
@@ -151,12 +151,10 @@ public class BracketFragment extends Fragment {
             roundTitle.setText("Round " + round);
             androidx.recyclerview.widget.RecyclerView rv = roundView.findViewById(R.id.recycler_round_matches);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
-            int finalRound = round;
             MatchAdapter adapter = new MatchAdapter(roundMatches, match -> showScoreDialog(match));
             rv.setAdapter(adapter);
             binding.layoutRounds.addView(roundView);
             if (round < maxRound) continue;
-            // advance button for last round
             View btnAdvance = LayoutInflater.from(getContext()).inflate(R.layout.item_advance_button, binding.layoutRounds, false);
             com.google.android.material.button.MaterialButton btn = btnAdvance.findViewById(R.id.btn_advance);
             btn.setText("Advance to Round " + (round + 1));
@@ -228,7 +226,7 @@ public class BracketFragment extends Fragment {
     private void updateScore(Match match, int scoreA, int scoreB) {
         RetrofitClient.getInstance().getApi()
             .updateMatchScore(match.getId(), new UpdateScoreRequest(scoreA, scoreB))
-            .enqueue(new Callback<Match>() {
+            .enqueue(new Callback<>() {
                 @Override
                 public void onResponse(@NonNull Call<Match> call, @NonNull Response<Match> response) {
                     if (!isAdded()) return;
@@ -238,6 +236,7 @@ public class BracketFragment extends Fragment {
                         Toast.makeText(getContext(), "Failed to update score", Toast.LENGTH_SHORT).show();
                     }
                 }
+
                 @Override
                 public void onFailure(@NonNull Call<Match> call, @NonNull Throwable t) {
                     if (!isAdded()) return;
@@ -247,7 +246,7 @@ public class BracketFragment extends Fragment {
     }
 
     private void advanceRound(int round) {
-        RetrofitClient.getInstance().getApi().advanceRound(tournamentId, round).enqueue(new Callback<List<Match>>() {
+        RetrofitClient.getInstance().getApi().advanceRound(tournamentId, round).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Match>> call, @NonNull Response<List<Match>> response) {
                 if (!isAdded()) return;
@@ -262,6 +261,7 @@ public class BracketFragment extends Fragment {
                     }
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<List<Match>> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
@@ -271,7 +271,7 @@ public class BracketFragment extends Fragment {
     }
 
     private void advanceSwissRound(int round) {
-        RetrofitClient.getInstance().getApi().advanceSwissRound(tournamentId, round).enqueue(new Callback<List<Match>>() {
+        RetrofitClient.getInstance().getApi().advanceSwissRound(tournamentId, round).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Match>> call, @NonNull Response<List<Match>> response) {
                 if (!isAdded()) return;
@@ -286,6 +286,7 @@ public class BracketFragment extends Fragment {
                     }
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<List<Match>> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
