@@ -137,52 +137,105 @@ public class BracketFragment extends Fragment {
             });
         });
     }
+    private boolean isFinalRound(List<Match> roundMatches) {
+        return roundMatches.size() == 1;
+    }
 
     private void renderElimination(List<Match> matches) {
         binding.layoutRounds.removeAllViews();
         int maxRound = 0;
         for (Match m : matches) if (m.getRound() > maxRound) maxRound = m.getRound();
+
         for (int round = 1; round <= maxRound; round++) {
             List<Match> roundMatches = new ArrayList<>();
             for (Match m : matches) if (m.getRound() == round) roundMatches.add(m);
             if (roundMatches.isEmpty()) continue;
+
             View roundView = LayoutInflater.from(getContext()).inflate(R.layout.item_round_section, binding.layoutRounds, false);
             androidx.appcompat.widget.AppCompatTextView roundTitle = roundView.findViewById(R.id.text_round_title);
-            roundTitle.setText("Round " + round);
+
+            boolean isLastRound = (round == maxRound);
+            boolean isFinal = isLastRound && isFinalRound(roundMatches);
+            if (isFinal) {
+                roundTitle.setText("Final");
+            } else if (isLastRound && roundMatches.size() == 2) {
+                roundTitle.setText("Semi-Finals");
+            } else {
+                roundTitle.setText("Round " + round);
+            }
+
             androidx.recyclerview.widget.RecyclerView rv = roundView.findViewById(R.id.recycler_round_matches);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
-            int finalRound = round;
             MatchAdapter adapter = new MatchAdapter(roundMatches, match -> showScoreDialog(match));
             rv.setAdapter(adapter);
             binding.layoutRounds.addView(roundView);
+
             if (round < maxRound) continue;
-            // advance button for last round
+
             View btnAdvance = LayoutInflater.from(getContext()).inflate(R.layout.item_advance_button, binding.layoutRounds, false);
             com.google.android.material.button.MaterialButton btn = btnAdvance.findViewById(R.id.btn_advance);
-            btn.setText("Advance to Round " + (round + 1));
-            int finalRound1 = round;
-            btn.setOnClickListener(v -> advanceRound(finalRound1));
+
+            if (isFinal) {
+                btn.setText("Tournament Complete");
+                btn.setEnabled(false);
+                btn.setAlpha(0.5f);
+            } else {
+                btn.setText("Advance to Round " + (round + 1));
+                int finalRound = round;
+                btn.setOnClickListener(v -> advanceRound(finalRound));
+            }
             binding.layoutRounds.addView(btnAdvance);
         }
     }
 
     private void renderRoundRobin(List<Match> matches) {
         binding.layoutRounds.removeAllViews();
-        View rrView = LayoutInflater.from(getContext()).inflate(R.layout.layout_round_robin, binding.layoutRounds, false);
-        androidx.recyclerview.widget.RecyclerView rv = rrView.findViewById(R.id.recycler_rr_matches);
-        rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        RoundRobinAdapter adapter = new RoundRobinAdapter(matches, tournament, match -> showScoreDialog(match));
-        rv.setAdapter(adapter);
-        binding.layoutRounds.addView(rrView);
+
+        int maxRound = 0;
+        for (Match m : matches) if (m.getRound() > maxRound) maxRound = m.getRound();
+
+        if (maxRound <= 1) {
+            View rrView = LayoutInflater.from(getContext()).inflate(R.layout.layout_round_robin, binding.layoutRounds, false);
+            androidx.recyclerview.widget.RecyclerView rv = rrView.findViewById(R.id.recycler_rr_matches);
+            rv.setLayoutManager(new LinearLayoutManager(getContext()));
+            RoundRobinAdapter adapter = new RoundRobinAdapter(matches, tournament, match -> showScoreDialog(match));
+            rv.setAdapter(adapter);
+            binding.layoutRounds.addView(rrView);
+        } else {
+            int totalTeams = tournament.getTournamentTeams() != null ? tournament.getTournamentTeams().size() : 0;
+            int singleLegRounds = totalTeams > 0 ? totalTeams - 1 : maxRound;
+            for (int round = 1; round <= maxRound; round++) {
+                List<Match> roundMatches = new ArrayList<>();
+                for (Match m : matches) if (m.getRound() == round) roundMatches.add(m);
+                if (roundMatches.isEmpty()) continue;
+
+                View roundView = LayoutInflater.from(getContext()).inflate(R.layout.item_round_section, binding.layoutRounds, false);
+                androidx.appcompat.widget.AppCompatTextView roundTitle = roundView.findViewById(R.id.text_round_title);
+
+                if (maxRound > singleLegRounds && round > singleLegRounds) {
+                    roundTitle.setText("Matchday " + (round - singleLegRounds) + " (2nd Leg)");
+                } else {
+                    roundTitle.setText("Matchday " + round);
+                }
+
+                androidx.recyclerview.widget.RecyclerView rv = roundView.findViewById(R.id.recycler_round_matches);
+                rv.setLayoutManager(new LinearLayoutManager(getContext()));
+                RoundRobinAdapter adapter = new RoundRobinAdapter(roundMatches, tournament, match -> showScoreDialog(match));
+                rv.setAdapter(adapter);
+                binding.layoutRounds.addView(roundView);
+            }
+        }
     }
 
     private void renderSwiss(List<Match> matches) {
         binding.layoutRounds.removeAllViews();
         int maxRound = matches.stream().mapToInt(Match::getRound).filter(m -> m >= 0).max().orElse(0);
+
         for (int round = 1; round <= maxRound; round++) {
             List<Match> roundMatches = new ArrayList<>();
             for (Match m : matches) if (m.getRound() == round) roundMatches.add(m);
             if (roundMatches.isEmpty()) continue;
+
             View roundView = LayoutInflater.from(getContext()).inflate(R.layout.item_round_section, binding.layoutRounds, false);
             androidx.appcompat.widget.AppCompatTextView roundTitle = roundView.findViewById(R.id.text_round_title);
             roundTitle.setText("Swiss Round " + round);
@@ -192,6 +245,7 @@ public class BracketFragment extends Fragment {
             rv.setAdapter(adapter);
             binding.layoutRounds.addView(roundView);
         }
+
         View btnAdvance = LayoutInflater.from(getContext()).inflate(R.layout.item_advance_button, binding.layoutRounds, false);
         com.google.android.material.button.MaterialButton btn = btnAdvance.findViewById(R.id.btn_advance);
         btn.setText("Advance Swiss Round");
@@ -210,40 +264,40 @@ public class BracketFragment extends Fragment {
         editScoreA.setText(String.valueOf(match.getTeamAScore()));
         editScoreB.setText(String.valueOf(match.getTeamBScore()));
         new AlertDialog.Builder(requireContext())
-            .setTitle("Update Score")
-            .setView(dialogView)
-            .setPositiveButton("Save", (dialog, which) -> {
-                try {
-                    int scoreA = Integer.parseInt(editScoreA.getText().toString());
-                    int scoreB = Integer.parseInt(editScoreB.getText().toString());
-                    updateScore(match, scoreA, scoreB);
-                } catch (NumberFormatException e) {
-                    Toast.makeText(getContext(), "Invalid score", Toast.LENGTH_SHORT).show();
-                }
-            })
-            .setNegativeButton("Cancel", null)
-            .show();
+                .setTitle("Update Score")
+                .setView(dialogView)
+                .setPositiveButton("Save", (dialog, which) -> {
+                    try {
+                        int scoreA = Integer.parseInt(editScoreA.getText().toString());
+                        int scoreB = Integer.parseInt(editScoreB.getText().toString());
+                        updateScore(match, scoreA, scoreB);
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getContext(), "Invalid score", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void updateScore(Match match, int scoreA, int scoreB) {
         RetrofitClient.getInstance().getApi()
-            .updateMatchScore(match.getId(), new UpdateScoreRequest(scoreA, scoreB))
-            .enqueue(new Callback<Match>() {
-                @Override
-                public void onResponse(@NonNull Call<Match> call, @NonNull Response<Match> response) {
-                    if (!isAdded()) return;
-                    if (response.isSuccessful()) {
-                        loadTournament();
-                    } else {
-                        Toast.makeText(getContext(), "Failed to update score", Toast.LENGTH_SHORT).show();
+                .updateMatchScore(match.getId(), new UpdateScoreRequest(scoreA, scoreB))
+                .enqueue(new Callback<Match>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Match> call, @NonNull Response<Match> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful()) {
+                            loadTournament();
+                        } else {
+                            Toast.makeText(getContext(), "Failed to update score", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
-                @Override
-                public void onFailure(@NonNull Call<Match> call, @NonNull Throwable t) {
-                    if (!isAdded()) return;
-                    Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onFailure(@NonNull Call<Match> call, @NonNull Throwable t) {
+                        if (!isAdded()) return;
+                        Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void advanceRound(int round) {
