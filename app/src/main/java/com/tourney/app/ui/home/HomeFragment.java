@@ -41,7 +41,7 @@ public class HomeFragment extends Fragment {
         btnGoTeams.setOnClickListener(v ->
             Navigation.findNavController(v).navigate(R.id.teamsFragment));
 
-        RetrofitClient.getInstance().getApi().getTournaments().enqueue(new Callback<List<Tournament>>() {
+        RetrofitClient.getInstance().getApi().getTournaments().enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Tournament>> call, @NonNull Response<List<Tournament>> response) {
                 if (!isAdded()) return;
@@ -49,11 +49,13 @@ public class HomeFragment extends Fragment {
                     textTournamentCount.setText(String.valueOf(response.body().size()));
                 }
             }
+
             @Override
-            public void onFailure(@NonNull Call<List<Tournament>> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<List<Tournament>> call, @NonNull Throwable t) {
+            }
         });
 
-        RetrofitClient.getInstance().getApi().getTeams().enqueue(new Callback<List<Team>>() {
+        RetrofitClient.getInstance().getApi().getTeams().enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Team>> call, @NonNull Response<List<Team>> response) {
                 if (!isAdded()) return;
@@ -61,8 +63,10 @@ public class HomeFragment extends Fragment {
                     textTeamCount.setText(String.valueOf(response.body().size()));
                 }
             }
+
             @Override
-            public void onFailure(@NonNull Call<List<Team>> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<List<Team>> call, @NonNull Throwable t) {
+            }
         });
     }
 }
