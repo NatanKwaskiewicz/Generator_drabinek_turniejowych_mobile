@@ -19,7 +19,6 @@ import com.tourney.app.databinding.FragmentBracketBinding;
 import com.tourney.app.models.Match;
 import com.tourney.app.models.Tournament;
 import com.tourney.app.models.UpdateScoreRequest;
-import com.tourney.app.utils.RoundRobinScheduler;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -30,6 +29,8 @@ public class BracketFragment extends Fragment {
     private FragmentBracketBinding binding;
     private int tournamentId;
     private Tournament tournament;
+
+    private boolean isAdvancing = false;
 
     @Nullable
     @Override
@@ -108,126 +109,71 @@ public class BracketFragment extends Fragment {
 
     private void setupGenerateButton(String formatName) {
         binding.btnGenerateMatches.setOnClickListener(v -> {
+            Call<List<Match>> call;
             if ("Round Robin".equals(formatName)) {
-                generateRoundRobinLocally();
+                call = RetrofitClient.getInstance().getApi().generateRoundRobinMatches(tournamentId);
             } else if ("Swiss".equals(formatName)) {
-                callGenerateApi(
-                        RetrofitClient.getInstance().getApi().generateSwissMatches(tournamentId));
+                call = RetrofitClient.getInstance().getApi().generateSwissMatches(tournamentId);
             } else {
-                callGenerateApi(
-                        RetrofitClient.getInstance().getApi().generateMatches(tournamentId));
+                call = RetrofitClient.getInstance().getApi().generateMatches(tournamentId);
             }
-        });
-    }
-
-    /**
-     * Generuje Round Robin lokalnie (poprawny algorytm circle/rotation),
-     * następnie wysyła gotowe mecze do backendu endpointem bulk-save.
-     * Double leg = zawsze true dla RR.
-     */
-    private void generateRoundRobinLocally() {
-        if (tournament.getTournamentTeams() == null
-                || tournament.getTournamentTeams().size() < 2) {
-            Toast.makeText(getContext(), "Need at least 2 teams", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        List<Integer> teamIds = new ArrayList<>();
-        for (Tournament.TournamentTeam tt : tournament.getTournamentTeams()) {
-            teamIds.add(tt.getTeamId());
-        }
-
-        List<RoundRobinScheduler.ScheduledMatch> schedule =
-                RoundRobinScheduler.generate(teamIds, true);
-
-        String validation = RoundRobinScheduler.validate(schedule, teamIds, true);
-        if (!validation.isEmpty()) {
-            Toast.makeText(getContext(), "Schedule error: " + validation, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        List<com.tourney.app.models.CreateMatchRequest> requests = new ArrayList<>();
-        for (RoundRobinScheduler.ScheduledMatch sm : schedule) {
-            requests.add(new com.tourney.app.models.CreateMatchRequest(
-                    tournamentId, sm.teamAId, sm.teamBId, sm.round));
-        }
-
-        binding.btnGenerateMatches.setEnabled(false);
-        RetrofitClient.getInstance().getApi()
-                .createMatches(requests)
-                .enqueue(new Callback<>() {
-                    @Override
-                    public void onResponse(@NonNull Call<List<Match>> call,
-                                           @NonNull Response<List<Match>> response) {
-                        if (!isAdded()) return;
-                        binding.btnGenerateMatches.setEnabled(true);
-                        if (response.isSuccessful()) {
-                            loadTournament();
-                        } else {
-                            try {
-                                String err = response.errorBody() != null
-                                        ? response.errorBody().string() : "Error";
-                                Toast.makeText(getContext(), err, Toast.LENGTH_LONG).show();
-                            } catch (Exception e) {
-                                Toast.makeText(getContext(), "Failed to save matches", Toast.LENGTH_SHORT).show();
-                            }
+            binding.btnGenerateMatches.setEnabled(false);
+            call.enqueue(new Callback<>() {
+                @Override
+                public void onResponse(@NonNull Call<List<Match>> call,
+                                       @NonNull Response<List<Match>> response) {
+                    if (!isAdded()) return;
+                    binding.btnGenerateMatches.setEnabled(true);
+                    if (response.isSuccessful()) {
+                        loadTournament();
+                    } else {
+                        try {
+                            String err = response.errorBody() != null
+                                    ? response.errorBody().string() : "Error";
+                            Toast.makeText(getContext(), err, Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Failed to generate", Toast.LENGTH_SHORT).show();
                         }
                     }
-
-                    @Override
-                    public void onFailure(@NonNull Call<List<Match>> call, @NonNull Throwable t) {
-                        if (!isAdded()) return;
-                        binding.btnGenerateMatches.setEnabled(true);
-                        Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void callGenerateApi(Call<List<Match>> call) {
-        binding.btnGenerateMatches.setEnabled(false);
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Match>> call,
-                                   @NonNull Response<List<Match>> response) {
-                if (!isAdded()) return;
-                binding.btnGenerateMatches.setEnabled(true);
-                if (response.isSuccessful()) {
-                    loadTournament();
-                } else {
-                    try {
-                        String err = response.errorBody() != null
-                                ? response.errorBody().string() : "Error";
-                        Toast.makeText(getContext(), err, Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        Toast.makeText(getContext(), "Failed to generate", Toast.LENGTH_SHORT).show();
-                    }
                 }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<List<Match>> call, @NonNull Throwable t) {
-                if (!isAdded()) return;
-                binding.btnGenerateMatches.setEnabled(true);
-                Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onFailure(@NonNull Call<List<Match>> call, @NonNull Throwable t) {
+                    if (!isAdded()) return;
+                    binding.btnGenerateMatches.setEnabled(true);
+                    Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 
     private void renderRoundRobin(List<Match> matches) {
         binding.layoutRounds.removeAllViews();
 
+        List<Match> sorted = new ArrayList<>(matches);
+        sorted.sort((a, b) -> {
+            if (a.getRound() != b.getRound()) return Integer.compare(a.getRound(), b.getRound());
+            return Integer.compare(a.getId(), b.getId());
+        });
+
         int maxRound = 0;
-        for (Match m : matches) if (m.getRound() > maxRound) maxRound = m.getRound();
+        for (Match m : sorted) if (m.getRound() > maxRound) maxRound = m.getRound();
+        if (maxRound == 0) return;
 
         int teamCount = tournament.getTournamentTeams() != null
                 ? tournament.getTournamentTeams().size() : 0;
-
-        int n = teamCount % 2 == 0 ? teamCount : teamCount + 1;
-        int leg1Rounds = n - 1;
+        int numRoundsPerLeg;
+        if (teamCount < 2) {
+            numRoundsPerLeg = maxRound / 2;
+        } else if (teamCount % 2 == 0) {
+            numRoundsPerLeg = teamCount - 1;
+        } else {
+            numRoundsPerLeg = teamCount;
+        }
 
         for (int round = 1; round <= maxRound; round++) {
             final List<Match> roundMatches = new ArrayList<>();
-            for (Match m : matches) if (m.getRound() == round) roundMatches.add(m);
+            for (Match m : sorted) if (m.getRound() == round) roundMatches.add(m);
             if (roundMatches.isEmpty()) continue;
 
             View roundView = LayoutInflater.from(getContext()).inflate(
@@ -235,13 +181,15 @@ public class BracketFragment extends Fragment {
             androidx.appcompat.widget.AppCompatTextView roundTitle =
                     roundView.findViewById(R.id.text_round_title);
 
-            boolean isSecondLeg = (round > leg1Rounds);
-            int matchday = isSecondLeg ? (round - leg1Rounds) : round;
-            String legSuffix = isSecondLeg ? " (2nd Leg)" : "";
-            roundTitle.setText("Matchday " + matchday + legSuffix);
+            boolean isSecondLeg = (round > numRoundsPerLeg);
+            int matchday = isSecondLeg ? (round - numRoundsPerLeg) : round;
+            String label = "Matchday " + matchday + (isSecondLeg ? " (2nd Leg)" : "");
+            roundTitle.setText(label);
 
             androidx.recyclerview.widget.RecyclerView rv =
                     roundView.findViewById(R.id.recycler_round_matches);
+            rv.setNestedScrollingEnabled(true);
+            rv.setHasFixedSize(false);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
             rv.setAdapter(new RoundRobinAdapter(roundMatches, tournament,
                     match -> showScoreDialog(match)));
@@ -252,12 +200,18 @@ public class BracketFragment extends Fragment {
     private void renderElimination(List<Match> matches) {
         binding.layoutRounds.removeAllViews();
 
+        List<Match> sorted = new ArrayList<>(matches);
+        sorted.sort((a, b) -> {
+            if (a.getRound() != b.getRound()) return Integer.compare(a.getRound(), b.getRound());
+            return Integer.compare(a.getId(), b.getId());
+        });
+
         int maxRound = 0;
-        for (Match m : matches) if (m.getRound() > maxRound) maxRound = m.getRound();
+        for (Match m : sorted) if (m.getRound() > maxRound) maxRound = m.getRound();
 
         for (int round = 1; round <= maxRound; round++) {
             final List<Match> roundMatches = new ArrayList<>();
-            for (Match m : matches) if (m.getRound() == round) roundMatches.add(m);
+            for (Match m : sorted) if (m.getRound() == round) roundMatches.add(m);
             if (roundMatches.isEmpty()) continue;
 
             View roundView = LayoutInflater.from(getContext()).inflate(
@@ -275,6 +229,8 @@ public class BracketFragment extends Fragment {
 
             androidx.recyclerview.widget.RecyclerView rv =
                     roundView.findViewById(R.id.recycler_round_matches);
+            rv.setNestedScrollingEnabled(true);
+            rv.setHasFixedSize(false);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
             rv.setAdapter(new MatchAdapter(roundMatches, match -> showScoreDialog(match)));
             binding.layoutRounds.addView(roundView);
@@ -293,7 +249,10 @@ public class BracketFragment extends Fragment {
             } else {
                 btn.setText("Advance to Round " + (round + 1));
                 int finalRound = round;
-                btn.setOnClickListener(v -> advanceRound(finalRound));
+                btn.setOnClickListener(v -> {
+                    if (isAdvancing) return;
+                    advanceRound(finalRound, btn);
+                });
             }
             binding.layoutRounds.addView(btnView);
         }
@@ -303,6 +262,13 @@ public class BracketFragment extends Fragment {
         binding.layoutRounds.removeAllViews();
 
         int maxRound = matches.stream().mapToInt(Match::getRound).filter(m -> m >= 0).max().orElse(0);
+        int teamCount = tournament.getTournamentTeams() != null
+                ? tournament.getTournamentTeams().size()
+                : 0;
+
+        int totalRounds = teamCount > 1
+                ? (int) Math.ceil(Math.log(teamCount) / Math.log(2))
+                : 1;
 
         for (int round = 1; round <= maxRound; round++) {
             final List<Match> roundMatches = new ArrayList<>();
@@ -317,18 +283,46 @@ public class BracketFragment extends Fragment {
 
             androidx.recyclerview.widget.RecyclerView rv =
                     roundView.findViewById(R.id.recycler_round_matches);
+            rv.setNestedScrollingEnabled(true);
+            rv.setHasFixedSize(false);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
             rv.setAdapter(new MatchAdapter(roundMatches, match -> showScoreDialog(match)));
             binding.layoutRounds.addView(roundView);
-        }
 
-        View btnView = LayoutInflater.from(getContext()).inflate(
-                R.layout.item_advance_button, binding.layoutRounds, false);
-        com.google.android.material.button.MaterialButton btn =
-                btnView.findViewById(R.id.btn_advance);
-        btn.setText("Advance Swiss Round");
-        btn.setOnClickListener(v -> advanceSwissRound(maxRound));
-        binding.layoutRounds.addView(btnView);
+            boolean isLast = (round == maxRound);
+
+            if(!isLast) continue;
+
+            boolean currentRoundAllPlayed = true;
+
+            for (Match m : roundMatches) {
+                if (!m.isPlayed()) {
+                    currentRoundAllPlayed = false;
+                    break;
+                }
+            }
+
+            boolean tournamentFinished =
+                    round >= totalRounds && currentRoundAllPlayed;
+
+            View btnView = LayoutInflater.from(getContext()).inflate(
+                    R.layout.item_advance_button, binding.layoutRounds, false);
+            com.google.android.material.button.MaterialButton btn =
+                    btnView.findViewById(R.id.btn_advance);
+
+            if (tournamentFinished) {
+                btn.setText("Tournament Complete");
+                btn.setEnabled(false);
+                btn.setAlpha(0.5f);
+            } else {
+                btn.setText("Advance Swiss Round");
+                btn.setOnClickListener(v -> {
+                    if (isAdvancing) return;
+                    advanceSwissRound(maxRound, btn);
+                });
+            }
+            binding.layoutRounds.addView(btnView);
+        }
     }
 
 
@@ -381,7 +375,11 @@ public class BracketFragment extends Fragment {
                 });
     }
 
-    private void advanceRound(int round) {
+    private void advanceRound(int round, com.google.android.material.button.MaterialButton btn) {
+        isAdvancing = true;
+        btn.setEnabled(false);
+        btn.setAlpha(0.5f);
+
         RetrofitClient.getInstance().getApi()
                 .advanceRound(tournamentId, round)
                 .enqueue(new Callback<>() {
@@ -389,9 +387,12 @@ public class BracketFragment extends Fragment {
                     public void onResponse(@NonNull Call<List<Match>> call,
                                            @NonNull Response<List<Match>> response) {
                         if (!isAdded()) return;
+                        isAdvancing = false;
                         if (response.isSuccessful()) {
                             loadTournament();
                         } else {
+                            btn.setEnabled(true);
+                            btn.setAlpha(1f);
                             try {
                                 String err = response.errorBody() != null
                                         ? response.errorBody().string() : "Cannot advance";
@@ -406,12 +407,19 @@ public class BracketFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Call<List<Match>> call, @NonNull Throwable t) {
                         if (!isAdded()) return;
+                        isAdvancing = false;
+                        btn.setEnabled(true);
+                        btn.setAlpha(1f);
                         Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    private void advanceSwissRound(int round) {
+    private void advanceSwissRound(int round, com.google.android.material.button.MaterialButton btn) {
+        isAdvancing = true;
+        btn.setEnabled(false);
+        btn.setAlpha(0.5f);
+
         RetrofitClient.getInstance().getApi()
                 .advanceSwissRound(tournamentId, round)
                 .enqueue(new Callback<>() {
@@ -419,14 +427,22 @@ public class BracketFragment extends Fragment {
                     public void onResponse(@NonNull Call<List<Match>> call,
                                            @NonNull Response<List<Match>> response) {
                         if (!isAdded()) return;
+                        isAdvancing = false;
                         if (response.isSuccessful()) loadTournament();
-                        else Toast.makeText(getContext(), "Cannot advance Swiss round",
-                                Toast.LENGTH_SHORT).show();
+                        else {
+                            btn.setEnabled(true);
+                            btn.setAlpha(1f);
+                            Toast.makeText(getContext(), "Cannot advance Swiss round",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<List<Match>> call, @NonNull Throwable t) {
                         if (!isAdded()) return;
+                        isAdvancing = false;
+                        btn.setEnabled(true);
+                        btn.setAlpha(1f);
                         Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
                     }
                 });
