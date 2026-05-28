@@ -45,6 +45,9 @@ public interface TourneyApi {
     @POST("matches/generate/{tournamentId}")
     Call<List<Match>> generateMatches(@Path("tournamentId") int tournamentId);
 
+    @POST("matches/generate-round-robin/{tournamentId}")
+    Call<List<Match>> generateRoundRobinMatches(@Path("tournamentId") int tournamentId);
+
     @POST("matches/generate-swiss/{tournamentId}")
     Call<List<Match>> generateSwissMatches(@Path("tournamentId") int tournamentId);
 
@@ -58,7 +61,4 @@ public interface TourneyApi {
 
     @PATCH("matches/{id}")
     Call<Match> updateMatchScore(@Path("id") int id, @Body UpdateScoreRequest request);
-
-    @POST("matches/bulk")
-    Call<List<Match>> createMatches(@Body List<CreateMatchRequest> matches);
 }
