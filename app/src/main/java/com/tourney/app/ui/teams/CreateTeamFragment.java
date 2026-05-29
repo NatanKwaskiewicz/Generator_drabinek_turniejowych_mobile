@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import com.tourney.app.R;
 import com.tourney.app.adapters.TeamMemberInputAdapter;
 import com.tourney.app.api.RetrofitClient;
 import com.tourney.app.databinding.FragmentCreateTeamBinding;
@@ -20,11 +19,16 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.tourney.app.api.CountriesClient;
+import com.tourney.app.models.Country;
+import java.util.Collections;
 
 public class CreateTeamFragment extends Fragment {
     private FragmentCreateTeamBinding binding;
     private TeamMemberInputAdapter memberAdapter;
     private int memberCount = 2;
+
+    private List<Country> countries = new ArrayList<>();
 
     @Nullable
     @Override
@@ -36,7 +40,10 @@ public class CreateTeamFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        memberAdapter = new TeamMemberInputAdapter(memberCount);
+
+        loadCountries();
+
+        memberAdapter = new TeamMemberInputAdapter(memberCount, countries);
         binding.recyclerMembers.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(getContext()));
         binding.recyclerMembers.setAdapter(memberAdapter);
         binding.textMemberCount.setText(String.valueOf(memberCount));
@@ -88,6 +95,44 @@ public class CreateTeamFragment extends Fragment {
                 Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void loadCountries() {
+        CountriesClient
+                .getInstance()
+                .getApi()
+                .getCountries()
+                .enqueue(new Callback<>() {
+
+                    @Override
+                    public void onResponse(
+                            @NonNull Call<List<Country>> call,
+                            @NonNull Response<List<Country>> response
+                    ) {
+                        if (!response.isSuccessful() || response.body() == null) {
+                            return;
+                        }
+
+                        countries.clear();
+                        countries.addAll(response.body());
+
+                        Collections.sort(countries, (a, b) ->
+                                a.getName().compareToIgnoreCase(b.getName())
+                        );
+
+                        if (memberAdapter != null) {
+                            memberAdapter.setCountries(countries);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            @NonNull Call<List<Country>> call,
+                            @NonNull Throwable t
+                    ) {
+
+                    }
+                });
     }
 
     @Override

@@ -15,11 +15,13 @@ public class CreateTeamRequest {
         private String name;
         private String surname;
         private String nickname;
+        private String countryCode;
 
-        public TeamMemberRequest(String name, String surname, String nickname) {
+        public TeamMemberRequest(String name, String surname, String nickname, String countryCode) {
             this.name = name;
             this.surname = surname;
             this.nickname = (nickname != null && !nickname.isEmpty()) ? nickname : null;
+            this.countryCode = (countryCode != null && !countryCode.isEmpty()) ? countryCode : null;
         }
     }
 }
