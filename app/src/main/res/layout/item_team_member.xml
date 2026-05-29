@@ -36,5 +36,14 @@
             android:fontFamily="monospace"
             android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/textCountry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:visibility="gone"
+            android:layout_marginTop="2dp" />
+
     </LinearLayout>
 </LinearLayout>

@@ -37,13 +37,43 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Vi
         ViewHolder(ItemTeamMemberBinding b) { super(b.getRoot()); binding = b; }
         void bind(Team.TeamMember m, int index) {
             binding.textIndex.setText(String.valueOf(index));
-            binding.textMemberName.setText(m.getName() + " " + m.getSurname());
+
+            binding.textMemberName.setText(
+                    m.getName() + " " + m.getSurname()
+            );
+
             if (m.getNickname() != null && !m.getNickname().isEmpty()) {
                 binding.textNickname.setVisibility(android.view.View.VISIBLE);
                 binding.textNickname.setText("\"" + m.getNickname() + "\"");
             } else {
                 binding.textNickname.setVisibility(android.view.View.GONE);
             }
+
+            if (m.getCountryCode() != null && !m.getCountryCode().isEmpty()) {
+
+                String flag = countryCodeToFlagEmoji(m.getCountryCode());
+
+                binding.textCountry.setVisibility(android.view.View.VISIBLE);
+                binding.textCountry.setText(flag + " " + m.getCountryCode());
+
+            } else {
+                binding.textCountry.setVisibility(android.view.View.GONE);
+            }
+        }
+
+        private String countryCodeToFlagEmoji(String countryCode) {
+
+            if (countryCode == null || countryCode.length() != 2) {
+                return "";
+            }
+
+            countryCode = countryCode.toUpperCase();
+
+            int firstLetter = Character.codePointAt(countryCode, 0) - 65 + 0x1F1E6;
+            int secondLetter = Character.codePointAt(countryCode, 1) - 65 + 0x1F1E6;
+
+            return new String(Character.toChars(firstLetter))
+                    + new String(Character.toChars(secondLetter));
         }
     }
 }
