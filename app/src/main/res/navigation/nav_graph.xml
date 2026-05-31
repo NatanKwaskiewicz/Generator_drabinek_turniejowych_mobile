@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.tourney.app.ui.home.HomeFragment"
-        android:label="Home" />
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/tournamentsFragment"
         android:name="com.tourney.app.ui.tournaments.TournamentsFragment"
-        android:label="Tournaments">
+        android:label="Tournaments"
+        tools:layout="@layout/fragment_tournaments">
         <action
             android:id="@+id/action_tournaments_to_bracket"
-            app:destination="@id/bracketFragment" />
+            app:destination="@id/bracketFragment"
+            />
         <action
             android:id="@+id/action_tournaments_to_createTournament"
             app:destination="@id/createTournamentFragment" />
@@ -24,7 +28,8 @@
     <fragment
         android:id="@+id/createTournamentFragment"
         android:name="com.tourney.app.ui.tournaments.CreateTournamentFragment"
-        android:label="Create Tournament">
+        android:label="Create Tournament"
+        tools:layout="@layout/fragment_create_tournament">
         <action
             android:id="@+id/action_createTournament_to_bracket"
             app:destination="@id/bracketFragment" />
@@ -33,7 +38,8 @@
     <fragment
         android:id="@+id/bracketFragment"
         android:name="com.tourney.app.ui.bracket.BracketFragment"
-        android:label="Bracket">
+        android:label="Bracket"
+        tools:layout="@layout/fragment_bracket">
         <argument
             android:name="tournamentId"
             app:argType="integer"
@@ -43,7 +49,8 @@
     <fragment
         android:id="@+id/teamsFragment"
         android:name="com.tourney.app.ui.teams.TeamsFragment"
-        android:label="Teams">
+        android:label="Teams"
+        tools:layout="@layout/fragment_teams">
         <action
             android:id="@+id/action_teams_to_createTeam"
             app:destination="@id/createTeamFragment" />
@@ -55,12 +62,14 @@
     <fragment
         android:id="@+id/createTeamFragment"
         android:name="com.tourney.app.ui.teams.CreateTeamFragment"
-        android:label="Register Team" />
+        android:label="Register Team"
+        tools:layout="@layout/fragment_create_team"/>
 
     <fragment
         android:id="@+id/teamDetailFragment"
         android:name="com.tourney.app.ui.teams.TeamDetailFragment"
-        android:label="Team Detail">
+        android:label="Team Detail"
+        tools:layout="@layout/fragment_team_detail">
         <argument
             android:name="teamId"
             app:argType="integer"
