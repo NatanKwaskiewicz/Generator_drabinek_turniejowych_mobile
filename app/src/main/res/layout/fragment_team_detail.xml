@@ -34,7 +34,7 @@
         android:id="@+id/text_empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No members registered"
+        android:text="@string/no_members_registered"
         android:textColor="@color/text_secondary"
         android:textSize="16sp"
         android:gravity="center"

@@ -10,7 +10,7 @@
         android:id="@+id/btn_advance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Advance Round"
+        android:text="@string/advance_round"
         app:backgroundTint="@color/accent" />
 
 </LinearLayout>

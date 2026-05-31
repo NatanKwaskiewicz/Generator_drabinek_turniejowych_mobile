@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create Tournament"
+            android:text="@string/create_tournament"
             android:textSize="24sp"
             android:textColor="@color/text_primary"
             android:textStyle="bold"
@@ -22,7 +22,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TOURNAMENT NAME"
+            android:text="@string/tournament_name"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:letterSpacing="0.1" />
@@ -37,7 +37,7 @@
                 android:id="@+id/edit_tournament_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="e.g. ZSK Counter-Strike Championship"
+                android:hint="@string/tournament_hint"
                 android:inputType="text"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_secondary" />
@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="FORMAT"
+            android:text="@string/format"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:letterSpacing="0.1" />
@@ -70,7 +70,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="SELECT TEAMS"
+            android:text="@string/select_teams"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:letterSpacing="0.1" />
@@ -79,7 +79,7 @@
             android:id="@+id/text_no_teams"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No teams registered yet. Create teams first."
+            android:text="@string/no_teams"
             android:textColor="@color/text_secondary"
             android:textSize="14sp"
             android:padding="8dp"
@@ -98,7 +98,7 @@
             android:id="@+id/btn_create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create Tournament"
+            android:text="@string/create_tournament"
             android:textSize="16sp"
             app:backgroundTint="@color/accent"
             xmlns:app="http://schemas.android.com/apk/res-auto" />

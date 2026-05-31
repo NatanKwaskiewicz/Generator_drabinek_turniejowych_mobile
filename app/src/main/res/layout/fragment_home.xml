@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TourneyApp"
+            android:text="@string/app_name"
             android:textSize="28sp"
             android:textColor="@color/text_primary"
             android:textStyle="bold"
@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Manage your tournaments"
+            android:text="@string/manage"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:paddingBottom="24dp" />
@@ -47,7 +47,7 @@
                     android:id="@+id/text_tournament_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="—"
+                    android:text="@string/emdash"
                     android:textSize="32sp"
                     android:textColor="@color/accent"
                     android:textStyle="bold" />
@@ -55,7 +55,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tournaments"
+                    android:text="@string/tournaments"
                     android:textSize="13sp"
                     android:textColor="@color/text_secondary" />
             </LinearLayout>
@@ -73,7 +73,7 @@
                     android:id="@+id/text_team_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="—"
+                    android:text="@string/emdash"
                     android:textSize="32sp"
                     android:textColor="@color/accent"
                     android:textStyle="bold" />
@@ -81,7 +81,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Teams"
+                    android:text="@string/teams"
                     android:textSize="13sp"
                     android:textColor="@color/text_secondary" />
             </LinearLayout>
@@ -91,7 +91,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="QUICK ACCESS"
+            android:text="@string/quick_access"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:letterSpacing="0.1"
@@ -101,7 +101,7 @@
             android:id="@+id/btn_go_tournaments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="View Tournaments"
+            android:text="@string/view_tournaments"
             android:textSize="15sp"
             android:layout_marginBottom="12dp"
             app:backgroundTint="@color/accent" />
@@ -110,7 +110,7 @@
             android:id="@+id/btn_go_teams"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="View Teams"
+            android:text="@string/view_teams"
             android:textSize="15sp"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             app:strokeColor="@color/accent" />
