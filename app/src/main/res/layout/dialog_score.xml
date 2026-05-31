@@ -18,14 +18,15 @@
             android:layout_weight="1"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:gravity="center" />
+            android:gravity="center"
+            android:textColor="@color/bg_primary"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" vs "
+            android:text="@string/vs"
             android:textSize="14sp"
-            android:textColor="@color/text_secondary" />
+            android:textColor="@color/bg_primary" />
 
         <TextView
             android:id="@+id/text_team_b"
@@ -34,7 +35,8 @@
             android:layout_weight="1"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:gravity="center" />
+            android:gravity="center"
+            android:textColor="@color/bg_primary"/>
 
     </LinearLayout>
 
@@ -48,7 +50,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:hint="Score A"
+            android:hint="@string/scoreA"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_score_a"
@@ -62,7 +64,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" : "
+            android:text="@string/colon"
             android:textSize="24sp"
             android:textColor="@color/text_secondary"
             android:paddingHorizontal="8dp" />
@@ -70,7 +72,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:hint="Score B"
+            android:hint="@string/scoreB"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_score_b"

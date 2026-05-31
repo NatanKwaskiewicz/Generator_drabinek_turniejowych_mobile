@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register Team"
+            android:text="@string/register_team"
             android:textSize="24sp"
             android:textColor="@color/text_primary"
             android:textStyle="bold"
@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TEAM NAME"
+            android:text="@string/team_name"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:letterSpacing="0.1" />
@@ -38,7 +38,7 @@
                 android:id="@+id/edit_team_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="e.g. ZSK Counter-Strike Team Alpha"
+                android:hint="@string/team_hint"
                 android:inputType="text"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_secondary" />
@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="NUMBER OF MEMBERS"
+            android:text="@string/members_number"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:letterSpacing="0.1" />
@@ -64,7 +64,7 @@
                 android:id="@+id/btn_minus"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="−"
+                android:text="@string/dash"
                 android:textSize="20sp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:strokeColor="@color/accent" />
@@ -73,7 +73,7 @@
                 android:id="@+id/text_member_count"
                 android:layout_width="56dp"
                 android:layout_height="wrap_content"
-                android:text="2"
+                android:text="@string/two"
                 android:textSize="18sp"
                 android:textColor="@color/text_primary"
                 android:gravity="center" />
@@ -82,7 +82,7 @@
                 android:id="@+id/btn_plus"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="+"
+                android:text="@string/plus"
                 android:textSize="20sp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:strokeColor="@color/accent" />
@@ -92,7 +92,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="MEMBERS"
+            android:text="@string/members"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:letterSpacing="0.1"
@@ -109,7 +109,7 @@
             android:id="@+id/btn_create_team"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create Team"
+            android:text="@string/create_team"
             android:textSize="16sp"
             app:backgroundTint="@color/accent" />
 

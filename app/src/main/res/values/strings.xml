@@ -1,4 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TourneyApp</string>
+    <string name="vs"> vs </string>
+    <string name="scoreA">Score A</string>
+    <string name="scoreB">Score B</string>
+    <string name="colon"> : </string>
+    <string name="no_matches_generated">No matches generated yet</string>
+    <string name="generate_matches">Generate Matches</string>
+    <string name="register_team">Register Team</string>
+    <string name="team_name">TEAM NAME</string>
+    <string name="team_hint">e.g. ZSK Counter-Strike Team Alpha</string>
+    <string name="members_number">NUMBER OF MEMBERS</string>
+    <string name="dash">-</string>
+    <string name="two">2</string>
+    <string name="plus">+</string>
+    <string name="members">MEMBERS</string>
+    <string name="create_team">Create Team</string>
+    <string name="create_tournament">Create Tournament</string>
+    <string name="tournament_name">TOURNAMENT NAME</string>
+    <string name="tournament_hint">e.g. ZSK Counter-Strike Championship</string>
+    <string name="format">FORMAT</string>
+    <string name="select_teams">SELECT TEAMS</string>
+    <string name="no_teams">No teams registered yet. Create teams first.</string>
+    <string name="manage">Manage your tournaments</string>
+    <string name="emdash">—</string>
+    <string name="tournaments">Tournaments</string>
+    <string name="teams">Teams</string>
+    <string name="quick_access">QUICK ACCESS</string>
+    <string name="view_tournaments">View Tournaments</string>
+    <string name="view_teams">View Teams</string>
+    <string name="no_members_registered">No members registered</string>
+    <string name="no_teams_yet_create_one">No teams yet. Create one!</string>
+    <string name="no_tournaments_yet_create_one">No tournaments yet. Create one!</string>
+    <string name="advance_round">Advance Round</string>
+    <string name="first_name">First name</string>
+    <string name="nickname">Nickname</string>
+    <string name="last_name">Last name</string>
+    <string name="country">Country</string>
+    <string name="right_arrow">›</string>
+    <string name="delete_icon">🗑</string>
+    <string name="all_matches">ALL MATCHES</string>
+    <string name="home">Home</string>
 </resources>

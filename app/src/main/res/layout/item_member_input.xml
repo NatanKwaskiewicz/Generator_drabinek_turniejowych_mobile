@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginHorizontal="4dp"
-        android:hint="First name"
+        android:hint="@string/first_name"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_name"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginHorizontal="4dp"
-        android:hint="Nickname"
+        android:hint="@string/nickname"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_nickname"
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginHorizontal="4dp"
-        android:hint="Last name"
+        android:hint="@string/last_name"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_surname"
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginHorizontal="4dp"
-        android:hint="Country"
+        android:hint="@string/country"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView

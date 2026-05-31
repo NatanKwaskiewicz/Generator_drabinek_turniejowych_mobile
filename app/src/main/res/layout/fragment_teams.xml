@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Teams"
+            android:text="@string/teams"
             android:textSize="24sp"
             android:textColor="@color/text_primary"
             android:textStyle="bold"
@@ -31,7 +31,7 @@
             android:id="@+id/text_empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No teams yet. Create one!"
+            android:text="@string/no_teams_yet_create_one"
             android:textColor="@color/text_secondary"
             android:textSize="16sp"
             android:gravity="center"
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="Create Team"
+        android:contentDescription="@string/create_team"
         app:srcCompat="@android:drawable/ic_input_add"
         app:backgroundTint="@color/accent" />
 
